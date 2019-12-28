@@ -74,8 +74,17 @@ class Task
     @comment.empty? ? "" : "\\\\*#{@comment.gsub('[','<').gsub(']','>')}*"
   end
 
+  def action
+    @action
+  end
+
   def location
-    "#{coords},#{zone}"
+    return "" if coords.empty?
+    if zone.empty?
+      return "[G #{coords}]"
+    else
+      return "[G #{coords},#{zone}]"
+    end
   end
 
   def zone
@@ -91,7 +100,7 @@ class Task
   end
 
   def target_name
-    "#{@target_name}[G#{location}]"
+    "#{@target_name.gsub('[','<').gsub(']','>')}#{location}"
   end
 
   def coords
@@ -120,6 +129,7 @@ class Task
 
   def xp
     min, max, level = @subject_name.match(/to (\d+) \/ (\d+) L(\d+)/)&.captures
+    return "" unless min && max && level
     "[XP#{level}+#{min}]"
   end
 
@@ -127,6 +137,8 @@ class Task
     task_string = case @action
     when /DING/
       "DING [XP#{@action.gsub('DING','').strip}]"
+    when /Accept Item Quest/
+      "#{@action}#{qa} from #{target_name}"
     when /Pick Up/
       "#{@action}#{qa} from #{target_name}"
     when /Skip/
@@ -137,6 +149,8 @@ class Task
       "#{@action}#{qc}"
     when /Set Hearth/
       "[S] #{@action}#{subject_name}"
+    when /Hearth/
+      "[H] #{@action}#{subject_name}"
     when /Vendor/
       "#{@action} at [V]#{target_name}"
     when /Buy/
@@ -148,9 +162,9 @@ class Task
     when /Get Flight Path/
       "[P] #{@action}#{subject_name}at #{target_name}"
     when /Go/
-      "[G #{@coords},#{zone}] #{@action}#{subject_name}"
+      "#{location} #{@action}#{subject_name}"
     when /Grind/
-      "Gring until #{xp}"
+      "#{action} #{xp}"
     else
       "#{@action} #{subject_name}"
     end
@@ -186,13 +200,20 @@ class Chapter
     "#{@guide_name} (Chapter #{format("%02d", index.to_i+1)})"
   end
 
+  def min_level
+    (@steps.map(&:tasks).flatten.select {|s| s.action.include? "DING"}.map {|s| s.action.gsub('DING','').strip.to_i }.min || 2) -1
+  end
+
+  def max_level
+    @steps.map(&:tasks).flatten.select {|s| s.action.include? "DING"}.map {|s| s.action.gsub('DING','').strip.to_i }.max || 60
+  end
 
   def to_s
     "Guidelime.registerGuide([[\n"+
     "[N #{name}]\n"+
     "[NX #{next_chapter_name}]\n"+
     "[GA #{@faction_filter_name}]\n"+
-    "[D ClassicWoW.live Leveling Guide for #{@name} converted to Guidelime by Marv]\n"+
+    "[D ClassicWoW.live Leveling Guide #{name} (#{min_level}-#{max_level}) converted to Guidelime by Marv]\n"+
     @steps.map(&:to_s).join("\n") +
     "\n]], \"ClassicWoW.live\")"
   end
