@@ -8,7 +8,7 @@ class Task
     @class_specific_2 = nil
     #unknown
     @subject_id = nil
-    #unknown
+    @subject_count = nil
     @subject_name = nil
     @target_name = nil
     @target_id = nil
@@ -21,7 +21,7 @@ class Task
   end
 
   def parse_to_self!(list_tingy)
-    @index, @action, @race_specific, @class_specific, @class_specific_2, _, @subject_id, _,  @subject_name, @target_name, @target_id, _, @coords, @zone, _, @requires, @comment = list_tingy
+    @index, @action, @race_specific, @class_specific, @class_specific_2, _, @subject_id, @subject_count,  @subject_name, @target_name, @target_id, _, @coords, @zone, _, @requires, @comment = list_tingy
     self
   end
 
@@ -35,7 +35,8 @@ class Task
       "R" => "Rogue",
       "S" => "Shaman",
       "D" => "Druid",
-      "H" => "Hunter"
+      "H" => "Hunter",
+      "z" => "Cooking"
     }
     if @class_specific.empty?
       ""
@@ -44,7 +45,11 @@ class Task
       class_names.each do |class_abbrv, class_name|
         applicable_classes << class_name if @class_specific.include?(class_abbrv)
       end
-      " [A #{applicable_classes.join(', ')}](#{applicable_classes.join(', ')} only)"
+      if applicable_classes.include? "Cooking"
+        " (#{applicable_classes.join(', ')} only)"
+      else
+        " [A #{applicable_classes.join(', ')}](#{applicable_classes.join(', ')} only)"
+      end
     end
   end
 
@@ -95,8 +100,13 @@ class Task
     @subject_id.empty? ? "" : " #{@subject_id.gsub('[','').gsub(']','')} "
   end
 
+  def subject_count
+    return "" if @subject_count.empty?
+    "#{@subject_count}x"
+  end
+
   def subject_name
-    @subject_name.empty? ? "" : " #{@subject_name.gsub('[','<').gsub(']','>')} "
+    @subject_name.empty? ? "" : " #{subject_count}#{@subject_name.gsub('[','<').gsub(']','>')} "
   end
 
   def target_name
@@ -164,7 +174,7 @@ class Task
     when /Go/
       "#{location} #{@action}#{subject_name}"
     when /Grind/
-      "#{action} #{xp}"
+      "#{action}#{location}#{subject_name}#{xp}"
     else
       "#{@action} #{subject_name}"
     end
