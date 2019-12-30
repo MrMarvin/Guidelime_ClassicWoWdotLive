@@ -157,6 +157,8 @@ class Task
       "#{@action}#{qt} at #{target_name}"
     when /Complete Quest/
       "#{@action}#{qc}"
+    when /Progress Quest/
+      "#{@action}#{qc}[O]"
     when /Set Hearth/
       "[S] #{@action}#{subject_name}"
     when /Hearth/
