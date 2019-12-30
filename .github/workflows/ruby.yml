@@ -1,0 +1,30 @@
+name: Ruby
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2.0.0
+      - name: Set up Ruby 2.6
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: 2.6.x
+      - name: Download
+        run: |
+          sh download_all.sh
+      - name: Convert guides
+        run: |
+          sh convert_all.sh
+      - name: Prepare package Addon as .zip
+        run: |
+          mkdir -p Guidelime_ClassicWoWdotLive
+          mv *.{lua,toc} Guidelime_ClassicWoWdotLive/
+      - name: Upload Addon .zip
+        uses: actions/upload-artifact@v1.0.0
+        with:
+          name: Guidelime_ClassicWoWdotLive
+          path: Guidelime_ClassicWoWdotLive
