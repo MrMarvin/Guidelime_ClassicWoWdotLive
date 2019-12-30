@@ -1,4 +1,4 @@
-name: Ruby
+name: Build and Package Addon
 
 on: [push]
 
