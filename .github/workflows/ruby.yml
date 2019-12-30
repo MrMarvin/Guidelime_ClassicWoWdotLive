@@ -23,8 +23,24 @@ jobs:
         run: |
           mkdir -p Guidelime_ClassicWoWdotLive
           mv *.{lua,toc} Guidelime_ClassicWoWdotLive/
-      - name: Upload Addon .zip
-        uses: actions/upload-artifact@v1.0.0
+          zip Guidelime_ClassicWoWdotLive-master.zip Guidelime_ClassicWoWdotLive/
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: Guidelime_ClassicWoWdotLive
-          path: Guidelime_ClassicWoWdotLive
+          tag_name: "0.11303.42-${{ github.ref }}"
+          release_name: master (${{ github.ref }}) CI for client 11303
+          draft: false
+          prerelease: false
+      - name: Upload addon .zip to CI release
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./Guidelime_ClassicWoWdotLive-master.zip
+          asset_name: Guidelime_ClassicWoWdotLive-master.zip
+          asset_content_type: application/zip
