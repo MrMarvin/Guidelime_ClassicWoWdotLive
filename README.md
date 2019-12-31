@@ -15,4 +15,4 @@ A similar, earlier project exists in https://github.com/lukeknoot/classicwow-to-
 [Guidelime](https://github.com/max-ri/Guidelime)
 
 ## Download
-See the [releases](https://github.com/MrMarvin/Guidelime_ClassicWoWdotLive/releases) above. Their should be a .zip file of the generated Addon code. Download and extract to your `AddOns/` directory.
+This is just a tool, not a ready-made addon. Nothing to download, sorry. Visit: [ClassicWOW.live](https://classicwow.live/leveling)
