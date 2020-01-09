@@ -143,6 +143,18 @@ class Task
     "[XP#{level}+#{min}]"
   end
 
+  def fly_to_location
+    fly_to = subject_name.gsub('to ',' ').strip
+    case fly_to
+    when /Crossroads/
+      "Crossroads"
+    when /Grom'gol*/
+      "Grom'Gol"
+    else
+      fly_to
+    end
+  end
+
   def to_s
     task_string = case @action
     when /DING/
@@ -157,8 +169,12 @@ class Task
       "#{@action}#{qt} at #{target_name}"
     when /Complete Quest/
       "#{@action}#{qc}"
+    when /Complete Objective/
+      "#{@action}#{qc}[O] - #{target_name}"
     when /Progress Quest/
       "#{@action}#{qc}[O]"
+    when /Progress Objective/
+      "#{@action}#{qc}[O] - #{target_name}"
     when /Set Hearth/
       "[S] #{@action}#{subject_name}"
     when /Hearth/
@@ -170,7 +186,7 @@ class Task
     when /Train/
       "[T] #{@action} #{subject_name}at #{target_name}"
     when /Fly/
-      "Fly to [F #{subject_name.gsub('to','').gsub('The','').strip}]"
+      "Fly to [F #{fly_to_location}]"
     when /Get Flight Path/
       "[P] #{@action}#{subject_name}at #{target_name}"
     when /Go/
@@ -178,7 +194,7 @@ class Task
     when /Grind/
       "#{action}#{location}#{subject_name}#{xp}"
     else
-      "#{@action} #{subject_name}"
+      "#{@action}#{subject_name}"
     end
     "#{task_string}#{class_restriction}#{race_restriction}#{second_line_comment}"
   end
