@@ -36,7 +36,9 @@ class Task
       "S" => "Shaman",
       "D" => "Druid",
       "H" => "Hunter",
-      "z" => "Cooking"
+      "z" => "Cooking",
+      "q" => "Post Patch 1.8 Silithus revamp",
+      "x" => "Post Patch 1.3 Dire Maul (might require to have entered DM at least once)"
     }
     if @class_specific.empty?
       ""
@@ -45,7 +47,7 @@ class Task
       class_names.each do |class_abbrv, class_name|
         applicable_classes << class_name if @class_specific.include?(class_abbrv)
       end
-      if applicable_classes.include? "Cooking"
+      if @class_specific.include?("z") || @class_specific.include?("q") || @class_specific.include?("x")
         " (#{applicable_classes.join(', ')} only)"
       else
         " [A #{applicable_classes.join(', ')}](#{applicable_classes.join(', ')} only)"
